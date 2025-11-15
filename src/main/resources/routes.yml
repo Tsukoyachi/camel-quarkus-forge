@@ -1,0 +1,33 @@
+routes:
+  - id: "file-to-file-json-only-route"
+    source:
+      type: "file"
+      properties:
+        path: "src/input"
+        delete: true
+        include: .*\.json
+    destination:
+      type: "file"
+      properties:
+        path: "src/output"
+
+  - id: "timer-to-direct-route"
+    source:
+      type: "timer"
+      properties:
+        name: "timer"
+        period: 2000
+    destination:
+      type: "direct"
+      properties:
+        "name": "timer-event"
+
+  - id: "direct-to-log-route"
+    source:
+      type: "direct"
+      properties:
+        name: "timer-event"
+    destination:
+      type: "log"
+      properties:
+        name: "timer-to-log Logger"
