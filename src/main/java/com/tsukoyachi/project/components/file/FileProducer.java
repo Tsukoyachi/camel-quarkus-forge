@@ -7,16 +7,32 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.tsukoyachi.project.*;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class FileProducer implements Producer {
-    private final ComponentConfiguration config;
+    private ComponentConfiguration config;
     
-    public FileProducer(ComponentConfiguration config) {
+    public FileProducer() {
+        // Default constructor for CDI
+    }
+    
+    @Override
+    public String getName() {
+        return "file";
+    }
+    
+    @Override
+    public void configure(ComponentConfiguration config) {
         this.config = config;
     }
     
     @Override
     public String getEndpoint() {
+        if (config == null) {
+            throw new IllegalStateException("Component not configured. Call configure() first.");
+        }
+        
         Map<String, Object> props = config.getProperties();
         String path = (String) props.get("path");
         

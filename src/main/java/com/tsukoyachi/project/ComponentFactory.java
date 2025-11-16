@@ -1,34 +1,55 @@
 package com.tsukoyachi.project;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
-import com.tsukoyachi.project.components.file.FileConsumer;
-import com.tsukoyachi.project.components.file.FileProducer;
-import com.tsukoyachi.project.components.direct.DirectConsumer;
-import com.tsukoyachi.project.components.direct.DirectProducer;
-import com.tsukoyachi.project.components.timer.TimerConsumer;
-import com.tsukoyachi.project.components.log.LogProducer;
+import java.util.HashMap;
+import java.util.Map;
 
 @ApplicationScoped
 public class ComponentFactory {
     
+    private final Map<String, Consumer> consumerMap = new HashMap<>();
+    private final Map<String, Producer> producerMap = new HashMap<>();
+    
+    @Inject
+    public ComponentFactory(Instance<Consumer> consumers, Instance<Producer> producers) {
+        // Build the consumer map
+        for (Consumer consumer : consumers) {
+            consumerMap.put(consumer.getName(), consumer);
+        }
+        
+        // Build the producer map
+        for (Producer producer : producers) {
+            producerMap.put(producer.getName(), producer);
+        }
+        
+        System.out.println("Registered consumers: " + consumerMap.keySet());
+        System.out.println("Registered producers: " + producerMap.keySet());
+    }
+    
     public Consumer createConsumer(ComponentConfiguration config) {
-        return switch (config.getType().toLowerCase()) {
-            case "file" -> new FileConsumer(config);
-            case "direct" -> new DirectConsumer(config);
-            case "timer" -> new TimerConsumer(config);
-            // Add other types as needed
-            default -> throw new IllegalArgumentException("Unsupported consumer type: " + config.getType());
-        };
+        Consumer consumer = consumerMap.get(config.getType().toLowerCase());
+        if (consumer == null) {
+            throw new IllegalArgumentException("Unsupported consumer type: " + config.getType() + 
+                ". Available types: " + consumerMap.keySet());
+        }
+        
+        // Configure the consumer with the provided configuration
+        consumer.configure(config);
+        return consumer;
     }
     
     public Producer createProducer(ComponentConfiguration config) {
-        return switch (config.getType().toLowerCase()) {
-            case "file" -> new FileProducer(config);
-            case "direct" -> new DirectProducer(config);
-            case "log" -> new LogProducer(config);
-            // Add other types as needed
-            default -> throw new IllegalArgumentException("Unsupported producer type: " + config.getType());
-        };
+        Producer producer = producerMap.get(config.getType().toLowerCase());
+        if (producer == null) {
+            throw new IllegalArgumentException("Unsupported producer type: " + config.getType() + 
+                ". Available types: " + producerMap.keySet());
+        }
+        
+        // Configure the producer with the provided configuration
+        producer.configure(config);
+        return producer;
     }
     
     public org.apache.camel.Processor createProcessor(ProcessorConfiguration config) {
