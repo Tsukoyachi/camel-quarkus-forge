@@ -7,10 +7,12 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.tsukoyachi.project.*;
+import com.tsukoyachi.project.interfaces.CamelProducer;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class FileProducer implements Producer {
+public class FileProducer implements CamelProducer {
     private ComponentConfiguration config;
     
     public FileProducer() {

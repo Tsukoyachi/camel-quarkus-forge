@@ -1,10 +1,12 @@
 package com.tsukoyachi.project.components.timer;
 
 import com.tsukoyachi.project.*;
+import com.tsukoyachi.project.interfaces.CamelConsumer;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class TimerConsumer implements Consumer {
+public class TimerConsumer implements CamelConsumer {
     private ComponentConfiguration config;
     
     public TimerConsumer() {

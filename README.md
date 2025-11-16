@@ -13,8 +13,8 @@ Dynamic framework for creating Apache Camel routes from YAML configuration witho
 
 ## Supported Components
 
-**Consumers**: File, Direct, Timer  
-**Producers**: File, Direct, Log
+**Camel Consumers**: File, Direct, Timer  
+**Camel Producers**: File, Direct, Log
 
 ## Quick Start
 

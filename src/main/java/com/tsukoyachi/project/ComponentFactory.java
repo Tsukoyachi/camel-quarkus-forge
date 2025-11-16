@@ -6,21 +6,24 @@ import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.tsukoyachi.project.interfaces.CamelConsumer;
+import com.tsukoyachi.project.interfaces.CamelProducer;
+
 @ApplicationScoped
 public class ComponentFactory {
     
-    private final Map<String, Consumer> consumerMap = new HashMap<>();
-    private final Map<String, Producer> producerMap = new HashMap<>();
+    private final Map<String, CamelConsumer> consumerMap = new HashMap<>();
+    private final Map<String, CamelProducer> producerMap = new HashMap<>();
     
     @Inject
-    public ComponentFactory(Instance<Consumer> consumers, Instance<Producer> producers) {
+    public ComponentFactory(Instance<CamelConsumer> consumers, Instance<CamelProducer> producers) {
         // Build the consumer map
-        for (Consumer consumer : consumers) {
+        for (CamelConsumer consumer : consumers) {
             consumerMap.put(consumer.getName(), consumer);
         }
         
         // Build the producer map
-        for (Producer producer : producers) {
+        for (CamelProducer producer : producers) {
             producerMap.put(producer.getName(), producer);
         }
         
@@ -28,8 +31,8 @@ public class ComponentFactory {
         System.out.println("Registered producers: " + producerMap.keySet());
     }
     
-    public Consumer createConsumer(ComponentConfiguration config) {
-        Consumer consumer = consumerMap.get(config.getType().toLowerCase());
+    public CamelConsumer createConsumer(ComponentConfiguration config) {
+        CamelConsumer consumer = consumerMap.get(config.getType().toLowerCase());
         if (consumer == null) {
             throw new IllegalArgumentException("Unsupported consumer type: " + config.getType() + 
                 ". Available types: " + consumerMap.keySet());
@@ -40,8 +43,8 @@ public class ComponentFactory {
         return consumer;
     }
     
-    public Producer createProducer(ComponentConfiguration config) {
-        Producer producer = producerMap.get(config.getType().toLowerCase());
+    public CamelProducer createProducer(ComponentConfiguration config) {
+        CamelProducer producer = producerMap.get(config.getType().toLowerCase());
         if (producer == null) {
             throw new IllegalArgumentException("Unsupported producer type: " + config.getType() + 
                 ". Available types: " + producerMap.keySet());

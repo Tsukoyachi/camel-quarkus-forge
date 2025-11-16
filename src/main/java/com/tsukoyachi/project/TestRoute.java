@@ -2,6 +2,9 @@ package com.tsukoyachi.project;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 
+import com.tsukoyachi.project.interfaces.CamelConsumer;
+import com.tsukoyachi.project.interfaces.CamelProducer;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -27,10 +30,10 @@ public class TestRoute extends RouteBuilder {
     
     private void createDynamicRoute(RouteConfiguration config) throws Exception {
         // Create source consumer
-        Consumer sourceConsumer = componentFactory.createConsumer(config.getSource());
+        CamelConsumer sourceConsumer = componentFactory.createConsumer(config.getSource());
         
         // Create destination producer  
-        Producer destinationProducer = componentFactory.createProducer(config.getDestination());
+        CamelProducer destinationProducer = componentFactory.createProducer(config.getDestination());
         
         // Create dynamic route
         RouteDefinition route = from(sourceConsumer.getEndpoint())

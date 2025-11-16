@@ -7,10 +7,12 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.tsukoyachi.project.*;
+import com.tsukoyachi.project.interfaces.CamelConsumer;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class FileConsumer implements Consumer {
+public class FileConsumer implements CamelConsumer {
     private ComponentConfiguration config;
     
     public FileConsumer() {

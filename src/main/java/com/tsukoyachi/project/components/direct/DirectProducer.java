@@ -1,10 +1,12 @@
 package com.tsukoyachi.project.components.direct;
 
 import com.tsukoyachi.project.*;
+import com.tsukoyachi.project.interfaces.CamelProducer;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class DirectProducer implements Producer {
+public class DirectProducer implements CamelProducer {
     private ComponentConfiguration config;
     
     public DirectProducer() {

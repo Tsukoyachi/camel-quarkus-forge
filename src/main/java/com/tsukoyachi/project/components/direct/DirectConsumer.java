@@ -1,10 +1,12 @@
 package com.tsukoyachi.project.components.direct;
 
 import com.tsukoyachi.project.*;
+import com.tsukoyachi.project.interfaces.CamelConsumer;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class DirectConsumer implements Consumer {
+public class DirectConsumer implements CamelConsumer {
     private ComponentConfiguration config;
     
     public DirectConsumer() {

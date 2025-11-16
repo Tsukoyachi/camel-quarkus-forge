@@ -1,10 +1,12 @@
 package com.tsukoyachi.project.components.log;
 
 import com.tsukoyachi.project.*;
+import com.tsukoyachi.project.interfaces.CamelProducer;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class LogProducer implements Producer {
+public class LogProducer implements CamelProducer {
     private ComponentConfiguration config;
     
     public LogProducer() {
