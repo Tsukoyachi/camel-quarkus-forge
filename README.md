@@ -35,32 +35,34 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 ## Configuration Example
 
-Configure routes in `src/main/resources/routes.yml`:
+Configure routes in `src/main/resources/application.yml`:
 
 ```yaml
-routes:
-  - id: "file-to-file-route"
-    source:
-      type: "file"
-      properties:
-        path: "src/input"
-        delete: true
-        include: .*\.json
-    destination:
-      type: "file"
-      properties:
-        path: "src/output"
+camel:
+  routes:
+    definitions:
+      - id: "file-to-file-route"
+        source:
+          type: "file"
+          properties:
+            path: "src/input"
+            delete: true
+            include: .*\.json
+        destination:
+          type: "file"
+          properties:
+            path: "src/output"
 
-  - id: "timer-to-log-route"
-    source:
-      type: "timer"
-      properties:
-        name: "scheduler"
-        period: 5000
-    destination:
-      type: "log"
-      properties:
-        name: "scheduler-log"
+      - id: "timer-to-log-route"
+        source:
+          type: "timer"
+          properties:
+            name: "scheduler"
+            period: 5000
+        destination:
+          type: "log"
+          properties:
+            name: "scheduler-log"
 ```
 
 The above configuration creates two routes: one monitoring JSON files and another logging scheduled events.
@@ -70,7 +72,6 @@ The above configuration creates two routes: one monitoring JSON files and anothe
 - **Apache Camel Quarkus 3.29.3** - Integration framework
 - **Quarkus 3.29.3** - Cloud-native Java framework
 - **CDI** - Dependency injection
-- **SnakeYAML** - YAML parsing
 - **Java 21** - Programming language
 
 ---
