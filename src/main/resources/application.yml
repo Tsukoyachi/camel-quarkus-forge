@@ -6,35 +6,26 @@ quarkus:
 camel:
   routes:
     definitions:
-      - id: "file-to-file-json-only-route"
-        source:
-          type: "file"
-          properties:
-            path: "src/input"
-            delete: "true"
-            include: ".*\\.json"
-        destination:
-          type: "file"
-          properties:
-            path: "src/output"
-            
-      - id: "timer-to-direct-route"
+      - id: "timer-to-kafka-route"
         source:
           type: "timer"
           properties:
-            name: "timer"
-            period: "2000"
+            name: "kafkaTimer"
+            period: "3000"
         destination:
-          type: "direct"
+          type: "kafka"
           properties:
-            name: "timer-event"
+            topic: "test-topic"
+            brokers: "${kafka.bootstrap.servers}"
             
-      - id: "direct-to-log-route"
+      - id: "kafka-to-log-route"
         source:
-          type: "direct"
+          type: "kafka"
           properties:
-            name: "timer-event"
+            topic: "test-topic"
+            brokers: "${kafka.bootstrap.servers}"
+            groupId: "camel-consumer-group"
         destination:
           type: "log"
           properties:
-            name: "timer-to-log Logger"
+            name: "kafka-message-logger"
