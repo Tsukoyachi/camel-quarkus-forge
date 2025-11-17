@@ -2,6 +2,7 @@ package com.tsukoyachi.project;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 
+import com.tsukoyachi.project.config.RouteConfigurationMapper;
 import com.tsukoyachi.project.interfaces.CamelConsumer;
 import com.tsukoyachi.project.interfaces.CamelProducer;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class TestRoute extends RouteBuilder {
     
     @Inject
-    RouteConfigurationService routeConfigService;
+    RouteConfigurationMapper routeConfigurationMapper;
     
     @Inject
     ComponentFactory componentFactory;
@@ -21,7 +22,7 @@ public class TestRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         // Load route configurations from YAML
-        List<RouteConfiguration> routes = routeConfigService.loadRouteConfigurations();
+        List<RouteConfiguration> routes = routeConfigurationMapper.mapToRouteConfigurations();
         
         for (RouteConfiguration routeConfig : routes) {
             createDynamicRoute(routeConfig);
