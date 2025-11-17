@@ -1,6 +1,7 @@
 #Test
 src/input/
 src/output/
+/docker/*
 
 #Maven
 target/
