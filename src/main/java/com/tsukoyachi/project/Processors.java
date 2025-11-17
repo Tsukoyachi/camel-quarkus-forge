@@ -1,7 +1,8 @@
 package com.tsukoyachi.project;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
-class TransformProcessor implements org.apache.camel.Processor {
+class TransformProcessor implements Processor {
     private final ProcessorConfiguration config;
     
     public TransformProcessor(ProcessorConfiguration config) {
@@ -16,7 +17,7 @@ class TransformProcessor implements org.apache.camel.Processor {
     }
 }
 
-class FilterProcessor implements org.apache.camel.Processor {
+class FilterProcessor implements Processor {
     private final ProcessorConfiguration config;
     
     public FilterProcessor(ProcessorConfiguration config) {
