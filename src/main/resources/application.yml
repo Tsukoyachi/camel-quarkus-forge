@@ -1,31 +1,9 @@
 quarkus:
   banner:
     path: banner.txt
+    
+  # Désactiver les dev-services non utilisés
+  kafka:
+    devservices:
+      enabled: false
 
-# Configuration des routes Camel
-camel:
-  routes:
-    definitions:
-      - id: "timer-to-kafka-route"
-        source:
-          type: "timer"
-          properties:
-            name: "kafkaTimer"
-            period: "3000"
-        destination:
-          type: "kafka"
-          properties:
-            topic: "test-topic"
-            brokers: "${kafka.bootstrap.servers}"
-            
-      - id: "kafka-to-log-route"
-        source:
-          type: "kafka"
-          properties:
-            topic: "test-topic"
-            brokers: "${kafka.bootstrap.servers}"
-            groupId: "camel-consumer-group"
-        destination:
-          type: "log"
-          properties:
-            name: "kafka-message-logger"

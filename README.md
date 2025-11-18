@@ -13,8 +13,8 @@ Dynamic framework for creating Apache Camel routes from YAML configuration witho
 
 ## Supported Components
 
-**Camel Consumers**: File, Direct, Timer, Kafka  
-**Camel Producers**: File, Direct, Log, Kafka
+**Camel Consumers**: File, Direct, Timer, Kafka, Ibmmq  
+**Camel Producers**: File, Direct, Log, Kafka, Ibmmq
 
 ## Quick Start
 
@@ -22,6 +22,7 @@ Dynamic framework for creating Apache Camel routes from YAML configuration witho
 ```bash
 ./mvnw quarkus:dev
 ```
+You can run a specific profile by adding `"-Dquarkus.profile=xxx"` where xxx is the application-xxx.yml you want to load.
 
 **Build application:**
 ```bash
@@ -35,7 +36,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 ## Configuration Example
 
-Configure routes in `src/main/resources/application.yml`:
+Configure routes in `src/main/resources/application.yml` or application-xxx.yml if you want to create custom route for specific env :
 
 ```yaml
 camel:

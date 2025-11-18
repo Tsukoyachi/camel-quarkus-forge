@@ -1,0 +1,39 @@
+quarkus:
+  compose:
+    devservices:
+      files: 
+        - devservices/docker-compose-ibmmq.yml
+
+camel:
+  routes:
+    definitions:
+      - id: "timer-to-ibmmq-route"
+        source:
+          type: "timer"
+          properties:
+            name: "ibmMqTestTimer"
+            period: "15000"
+        destination:
+          type: "ibmmq"
+          properties:
+            queue: "DEV.QUEUE.1"
+            
+      - id: "ibmmq-to-log-route"
+        source:
+          type: "ibmmq"
+          properties:
+            queue: "DEV.QUEUE.1"
+        destination:
+          type: "log"
+          properties:
+            name: "ibmmq-consumer-logger"
+            level: "INFO"
+
+# Configuration IBM MQ
+ibmmq:
+  host: ${IBMMQ_HOST:localhost}
+  port: ${IBMMQ_PORT:1414}
+  queueManager: ${IBMMQ_QUEUE_MANAGER:QM1}
+  channel: ${IBMMQ_CHANNEL:DEV.APP.SVRCONN}
+  username: ${IBMMQ_USERNAME:app}
+  password: ${IBMMQ_PASSWORD:passw0rd}
