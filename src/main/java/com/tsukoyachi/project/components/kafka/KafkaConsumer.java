@@ -1,10 +1,10 @@
 package com.tsukoyachi.project.components.kafka;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import org.apache.camel.builder.endpoint.dsl.KafkaEndpointBuilderFactory.KafkaEndpointConsumerBuilder;
+import org.apache.camel.model.RouteDefinition;
 
 import com.tsukoyachi.project.*;
 import com.tsukoyachi.project.interfaces.CamelConsumer;
@@ -30,43 +30,22 @@ public class KafkaConsumer implements CamelConsumer {
     }
     
     @Override
-    public String getEndpoint() {
+    public RouteDefinition configureFrom(EndpointRouteBuilder routeBuilder, String routeId) {
         if (config == null) {
             throw new IllegalStateException("Component not configured. Call configure() first.");
         }
-        
+
         Map<String, Object> props = config.getProperties();
         String topic = (String) props.remove("topic");
-        
+
         if (topic == null) {
             throw new IllegalArgumentException("Property 'topic' is required for a KafkaConsumer");
         }
-        
-        StringBuilder endpoint = new StringBuilder("kafka:");
-        endpoint.append(topic);
-        
-        // Build all parameters dynamically except 'path'
-        String queryParams = props.entrySet().stream()
-            .filter(entry -> entry.getValue() != null)       // Exclude null values
-            .map(this::formatValue)
-            .collect(Collectors.joining("&"));
-        
-        if (!queryParams.isEmpty()) {
-            endpoint.append("?").append(queryParams);
-        }
-        
-        System.out.println(endpoint.toString());
-        return endpoint.toString();
-    }
 
-    public String formatValue(Entry<String, Object> entry) {
-        String key = entry.getKey().trim();
-        String value = entry.getValue().toString().trim();
-        try {
-            String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
-            return key + "=" + encodedValue;
-        } catch (Exception e) {
-            return key + "=" + value; // Fallback if encoding fails
-        }
+        KafkaEndpointConsumerBuilder builder = routeBuilder.kafka(topic);
+
+        props.forEach(builder::doSetProperty);
+
+        return routeBuilder.from(builder).routeId(routeId);
     }
 }

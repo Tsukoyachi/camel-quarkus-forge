@@ -1,5 +1,5 @@
 package com.tsukoyachi.project;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 
 import com.tsukoyachi.project.config.RouteConfigurationMapper;
@@ -11,7 +11,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 
 @ApplicationScoped
-public class TestRoute extends RouteBuilder {
+public class TestRoute extends EndpointRouteBuilder {
     
     @Inject
     RouteConfigurationMapper routeConfigurationMapper;
@@ -36,9 +36,8 @@ public class TestRoute extends RouteBuilder {
         // Create destination producer  
         CamelProducer destinationProducer = componentFactory.createProducer(config.getDestination());
         
-        // Create dynamic route
-        RouteDefinition route = from(sourceConsumer.getEndpoint())
-            .routeId(config.getId())
+        // Create dynamic route using the new configureFrom method
+        RouteDefinition route = sourceConsumer.configureFrom(this, config.getId())
             .log("Processing message in route: " + config.getId());
         
         // Apply processors if defined
@@ -49,7 +48,7 @@ public class TestRoute extends RouteBuilder {
             }
         }
         
-        // End with producer
-        route.to(destinationProducer.getEndpoint());
+        // End with producer using the new configureTo method
+        destinationProducer.configureTo(this, route);
     }
 }

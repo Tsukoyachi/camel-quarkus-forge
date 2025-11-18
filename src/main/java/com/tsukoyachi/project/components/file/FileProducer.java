@@ -1,10 +1,10 @@
 package com.tsukoyachi.project.components.file;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import org.apache.camel.builder.endpoint.dsl.FileEndpointBuilderFactory.FileEndpointProducerBuilder;
+import org.apache.camel.model.ProcessorDefinition;
 
 import com.tsukoyachi.project.*;
 import com.tsukoyachi.project.interfaces.CamelProducer;
@@ -30,43 +30,18 @@ public class FileProducer implements CamelProducer {
     }
     
     @Override
-    public String getEndpoint() {
+    public ProcessorDefinition<?> configureTo(EndpointRouteBuilder routeBuilder, ProcessorDefinition<?> processorDefinition) {
         if (config == null) {
             throw new IllegalStateException("Component not configured. Call configure() first.");
         }
-        
-        Map<String, Object> props = config.getProperties();
-        String path = (String) props.get("path");
-        
-        if (path == null) {
-            throw new IllegalArgumentException("Property 'path' is required for a FileProducer");
-        }
-        
-        StringBuilder endpoint = new StringBuilder("file:");
-        endpoint.append(path);
-        
-        // Build all parameters dynamically except 'path'
-        String queryParams = props.entrySet().stream()
-            .filter(entry -> !"path".equals(entry.getKey())) // Exclude 'path'
-            .filter(entry -> entry.getValue() != null)       // Exclude null values
-            .map(this::formatValue)
-            .collect(Collectors.joining("&"));
-        
-        if (!queryParams.isEmpty()) {
-            endpoint.append("?").append(queryParams);
-        }
-        
-        return endpoint.toString();
-    }
 
-    public String formatValue(Entry<String, Object> entry) {
-        String key = entry.getKey().trim();
-        String value = entry.getValue().toString().trim();
-        try {
-            String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
-            return key + "=" + encodedValue;
-        } catch (Exception e) {
-            return key + "=" + value; // Fallback if encoding fails
-        }
+        Map<String, Object> props = config.getProperties();
+        String path = (String) props.remove("path");
+
+        FileEndpointProducerBuilder builder = routeBuilder.file(path);
+
+        props.forEach(builder::doSetProperty);
+
+        return processorDefinition.to(builder);
     }
 }

@@ -1,5 +1,9 @@
 package com.tsukoyachi.project.components.direct;
 
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.DirectEndpointConsumerBuilder;
+import org.apache.camel.model.RouteDefinition;
+
 import com.tsukoyachi.project.*;
 import com.tsukoyachi.project.interfaces.CamelConsumer;
 
@@ -24,12 +28,18 @@ public class DirectConsumer implements CamelConsumer {
     }
     
     @Override
-    public String getEndpoint() {
+    public RouteDefinition configureFrom(EndpointRouteBuilder routeBuilder, String routeId) {
         if (config == null) {
             throw new IllegalStateException("Component not configured. Call configure() first.");
         }
-        
+
         String name = (String) config.getProperties().get("name");
-        return "direct:" + name;
+        if (name == null) {
+            throw new IllegalArgumentException("Property 'name' is required for DirectConsumer");
+        }
+
+        DirectEndpointConsumerBuilder builder = routeBuilder.direct(name);
+
+        return routeBuilder.from(builder).routeId(routeId);
     }
 }

@@ -1,9 +1,14 @@
 package com.tsukoyachi.project.components.log;
 
+import java.util.Map;
+
 import com.tsukoyachi.project.*;
 import com.tsukoyachi.project.interfaces.CamelProducer;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+import org.apache.camel.builder.endpoint.dsl.LogEndpointBuilderFactory.LogEndpointBuilder;
+import org.apache.camel.model.ProcessorDefinition;
 
 @ApplicationScoped
 public class LogProducer implements CamelProducer {
@@ -24,12 +29,22 @@ public class LogProducer implements CamelProducer {
     }
     
     @Override
-    public String getEndpoint() {
+    public ProcessorDefinition<?> configureTo(EndpointRouteBuilder routeBuilder, ProcessorDefinition<?> processorDefinition) {
         if (config == null) {
             throw new IllegalStateException("Component not configured. Call configure() first.");
         }
+
+        Map<String, Object> props = config.getProperties();
+        String name = (String) props.remove("name");
         
-        String name = (String) config.getProperties().getOrDefault("name", "log");
-        return "log:" + name;
+        if (name == null) {
+            throw new IllegalArgumentException("Property 'name' is required for LogProducer");
+        }
+
+        LogEndpointBuilder builder = routeBuilder.log(name);
+
+        props.forEach(builder::doSetProperty);
+
+        return processorDefinition.to(builder);
     }
 }
